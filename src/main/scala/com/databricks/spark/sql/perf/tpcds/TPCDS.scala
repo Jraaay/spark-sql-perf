@@ -114,6 +114,10 @@ class TPCDS(@transient sqlContext: SQLContext)
     println(s"Ran ${succeeded.size} out of ${queries.size}")
     println(succeeded.map("\"" + _ + "\""))
   }
+
+  def main(): Unit = {
+    this.run(all)
+  }
 }
 
 
