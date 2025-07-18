@@ -1,4 +1,4 @@
-name: Build spark-sql-perf JAR
+name: Build and Upload Entire Project Directory
 
 on:
   push:
@@ -22,18 +22,18 @@ jobs:
           distribution: 'temurin'
           cache: 'sbt'
 
-      # 新增步骤：安装 sbt
       - name: Set up sbt
         uses: sbt/setup-sbt@v1
-        # with:
-        #   sbt-version: '1.9.9' # 可以指定 sbt 版本，默认为最新版
 
       - name: Build with sbt
         run: sbt package
 
-      - name: Upload JAR artifact
+      # 主要修改点在这里
+      - name: Upload entire project directory
         uses: actions/upload-artifact@v4
         with:
-          name: spark-sql-perf-jar
-          path: target/scala-*/spark-sql-perf_*.jar
+          # 修改产物名称以反映其内容
+          name: full-project-archive
+          # 将路径修改为 ./ 来指定当前目录（整个仓库）
+          path: ./
           if-no-files-found: error
