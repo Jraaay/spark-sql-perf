@@ -1,30 +1,32 @@
 name: Build spark-sql-perf JAR
 
-# 触发工作流程的事件
 on:
   push:
-    branches: [ main, master ] # 当推送到 main 或 master 分支时触发
+    branches: [ main, master ]
   pull_request:
-    branches: [ main, master ] # 当有针对 main 或 master 分支的 Pull Request 时触发
-  workflow_dispatch: # 允许手动触发
+    branches: [ main, master ]
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-latest # 使用最新的 Ubuntu 运行器
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        # 如果你的项目包含子模块，请取消下面的注释
-        # with:
-        #   submodules: 'recursive'
 
       - name: Set up JDK 11
         uses: actions/setup-java@v4
         with:
-          java-version: '11' # spark-sql-perf 通常需要 Java 8 或 11
+          java-version: '11'
           distribution: 'temurin'
-          cache: 'sbt' # 缓存 sbt 依赖项以加快后续构建速度
+          cache: 'sbt'
+
+      # 新增步骤：安装 sbt
+      - name: Set up sbt
+        uses: sbt/setup-sbt@v1
+        # with:
+        #   sbt-version: '1.9.9' # 可以指定 sbt 版本，默认为最新版
 
       - name: Build with sbt
         run: sbt package
@@ -33,5 +35,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: spark-sql-perf-jar
-          path: target/scala-*/spark-sql-perf_*.jar # 使用通配符匹配生成的 JAR 文件路径
-          if-no-files-found: error # 如果没有找到文件则报错
+          path: target/scala-*/spark-sql-perf_*.jar
+          if-no-files-found: error
