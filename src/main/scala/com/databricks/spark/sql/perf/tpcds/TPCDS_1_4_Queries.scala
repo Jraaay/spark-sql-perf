@@ -3864,16 +3864,7 @@ trait Tpcds_1_4_Queries extends Benchmark {
   val tpcds1_4QueriesMap = tpcds1_4Queries.map(q => q.name.split("-").get(0) -> q).toMap
 
   val runnable: Seq[Query] = Seq(
-    "q1", "q2", "q3", "q4", "q5", "q7", "q8", "q9",
-    "q11", "q12", "q13", "q15", "q17", "q18", "q19",
-    "q20", "q21", "q22", "q25", "q26", "q27", "q28", "q29",
-    "q31", "q34", "q36", "q37", "q38", "q39a", "q39b",
-    "q40", "q42", "q43", "q44", "q46", "q47", "q48", "q49",
-    "q50", "q51", "q52", "q53", "q54", "q55", "q57", "q59",
-    "q61", "q62", "q63", "q64", "q65", "q66", "q67", "q68",
-    "q71", "q72", "q73", "q74", "q75", "q76", "q77", "q78", "q79",
-    "q80", "q82", "q84", "q85", "q86", "q87", "q88", "q89",
-    "q90", "q91", "q93", "q96", "q97", "q98", "q99", "qSsMax").map(tpcds1_4QueriesMap)
+    "q1").map(tpcds1_4QueriesMap)
 
   val all: Seq[Query] = tpcds1_4QueriesMap.values.toSeq
 }

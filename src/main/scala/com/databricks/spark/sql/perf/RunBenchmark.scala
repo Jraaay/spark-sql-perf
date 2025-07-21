@@ -16,12 +16,13 @@
 
 package com.databricks.spark.sql.perf
 
+import com.databricks.spark.sql.perf.tpcds.TPCDS
+
 import java.net.InetAddress
 import java.io.File
 import org.apache.spark.sql.{SQLContext, SparkSession}
 import org.apache.spark.sql.functions._
-import org.apache.spark.{SparkContext, SparkConf}
-import scala.util.Try
+import org.apache.spark.{SparkConf, SparkContext}
 
 case class RunConfig(
     master: String = "local[*]",
@@ -78,24 +79,19 @@ object RunBenchmark {
     sqlContext.setConf("spark.sql.perf.results",
       new File("performance").toURI.toString)
 
-    val benchmark = Try {
-      Class.forName(config.benchmarkName)
-          .newInstance()
-          .asInstanceOf[Benchmark]
-    } getOrElse {
-      Class.forName("com.databricks.spark.sql.perf." + config.benchmarkName)
-          .newInstance()
-          .asInstanceOf[Benchmark]
-    }
+    val benchmark = Class.forName("com.databricks.spark.sql.perf." + config.benchmarkName)
+      .newInstance()
+      .asInstanceOf[TPCDS]
 
-    val allQueries = config.filter.map { f =>
-      benchmark.allQueries.filter(_.name contains f)
-    } getOrElse {
-      benchmark.allQueries
-    }
+    val allQueries = benchmark.runnable
 
     println("== QUERY LIST ==")
     allQueries.foreach(println)
+
+    sqlContext.sql(s"SHOW databases").collect().foreach { row =>
+      println(s"DATABASE== ${row.getString(0)} ==")
+    }
+    sqlContext.sql(s"USE tpcds_1")
 
     val experiment = benchmark.runExperiment(
       executionsToRun = allQueries,
